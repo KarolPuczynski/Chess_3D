@@ -13,6 +13,7 @@ def drawing_chessboard(screen):
 
 def draw_pieces(screen):
 
+    # adding pieces
     board = Board()
     for row in range(ROWS):
         for col in range(COLS):
