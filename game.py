@@ -2,23 +2,34 @@ import pygame
 from const import *
 from board import Board
 
-def drawing_chessboard(screen):
-    for row in range(ROWS):
-        for col in range(COLS):
-            if (row + col) % 2 == 0:
-                color = 'white'
-            else:
-                color = 'pink'
-            pygame.draw.rect(screen, color, (col*SQUARE_SIZE, row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+class Game():
 
-def draw_pieces(screen):
+    def __init__(self):
+        self.next_player = 'white'
+        self.board = Board()
 
-    # adding pieces
-    board = Board()
-    for row in range(ROWS):
-        for col in range(COLS):
-            if board.squares[row][col].piece:
-                piece = board.squares[row][col].piece
-                image_path = f'assets/images/{piece.color}_{piece.name}.png'
-                image = pygame.transform.scale(pygame.image.load(image_path), (100, 100))
-                screen.blit(image, (col*SQUARE_SIZE, row*SQUARE_SIZE))
+    def drawing_chessboard(self, screen):
+        
+        for row in range(ROWS):
+            for col in range(COLS):
+                if (row + col) % 2 == 0:
+                    color = 'white'
+                else:
+                    color = 'pink'
+                pygame.draw.rect(screen, color, (col*SQUARE_SIZE, row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+
+    def draw_pieces(self, screen):
+
+        # adding pieces
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.board.squares[row][col].piece:
+                    piece = self.board.squares[row][col].piece
+                    image_path = f'assets/images/{piece.color}_{piece.name}.png'
+                    image = pygame.transform.scale(pygame.image.load(image_path), (100, 100))
+                    screen.blit(image, (col*SQUARE_SIZE, row*SQUARE_SIZE))
+
+    def show_moves(self, screen):
+        for moves in piece.moves: 
+            rect = (1 * SQUARE_SIZE, 1 * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+            pygame.draw.rect(screen, 'blue', rect)

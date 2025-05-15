@@ -35,3 +35,6 @@ class Board:
         self.squares[row_other][3] = Square(row_other, 3, Queen(color))
         # adding king (white or black)
         self.squares[row_other][4] = Square(row_other, 4, King(color))
+
+    def calc_moves(self, row, col, piece):
+        pass
