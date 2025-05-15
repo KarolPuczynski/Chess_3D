@@ -12,8 +12,7 @@ while True:
     
     drawing_chessboard(screen)
     draw_pieces(screen)
-    # event checking
-    # and i dont know what else
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
