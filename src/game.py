@@ -1,15 +1,16 @@
 import pygame
 from const import *
 from board import Board
+from piece import Piece
 
 class Game():
 
     def __init__(self):
         self.next_player = 'white'
         self.board = Board()
+        self.selected_piece = None
 
-    def drawing_chessboard(self, screen):
-        
+    def drawing_chessboard(self, screen):      
         for row in range(ROWS):
             for col in range(COLS):
                 if (row + col) % 2 == 0:
@@ -19,8 +20,6 @@ class Game():
                 pygame.draw.rect(screen, color, (col*SQUARE_SIZE, row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
     def draw_pieces(self, screen):
-
-        # adding pieces
         for row in range(ROWS):
             for col in range(COLS):
                 if self.board.squares[row][col].piece:
@@ -29,7 +28,8 @@ class Game():
                     image = pygame.transform.scale(pygame.image.load(image_path), (100, 100))
                     screen.blit(image, (col*SQUARE_SIZE, row*SQUARE_SIZE))
 
-    def show_moves(self, screen):
+    def show_moves(self, screen, piece):
         for moves in piece.moves: 
-            rect = (1 * SQUARE_SIZE, 1 * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+            row, col = moves
+            rect = pygame.Rect(col*SQUARE_SIZE , row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
             pygame.draw.rect(screen, 'blue', rect)
