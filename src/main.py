@@ -42,7 +42,6 @@ while True:
                      game.selected_piece = None # If the clicked square is empty and is not in the list of possible moves
                     
                 
-
         elif event.type == pygame.QUIT: # event checking
             pygame.quit()
             exit()
