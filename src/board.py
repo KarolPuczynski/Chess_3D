@@ -143,11 +143,9 @@ class Board:
         if isinstance(piece, King):
             king_moves()
 
-        print(f"Possible moves for {piece.__class__.__name__} at ({row}, {col}): {piece.moves}")
 
 
     def move(self, row, col, piece, color):
-        print(self.squares[row][col].piece)
         self.squares[row][col].piece = piece
         self.squares[row][col].piece.moves = [] # Clear moves after moving the piece
         
