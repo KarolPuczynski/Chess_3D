@@ -18,6 +18,7 @@ class Knight(Piece):
 class Bishop(Piece):
     def __init__(self, color):
         super().__init__('bishop', color)
+        self.moves = []
 
 class Rook(Piece):
     def __init__(self, color):
