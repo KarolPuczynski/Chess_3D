@@ -16,7 +16,7 @@ class Game():
                 if (row + col) % 2 == 0:
                     color = 'white'
                 else:
-                    color = 'pink'
+                    color = 'darkgrey'
                 pygame.draw.rect(screen, color, (col*SQUARE_SIZE, row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
     def draw_pieces(self, screen):

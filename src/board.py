@@ -15,7 +15,7 @@ class Board:
         # Creating 64 objejcts of class Square
         for row in range(ROWS):
             for col in range(COLS):
-                self.squares[row][col] = Square(row, col)
+                self.squares[row][col] = Square(row, col, None)
 
     def _add_pieces(self, color):
         row_pawn, row_other = (6, 7) if color == 'white' else (1, 0)
@@ -64,20 +64,52 @@ class Board:
             
 
         def bishop_moves():
-            # increment_x = ROWS - row - 1
-            # increment_y = COLS - col - 1 
-            # diagonal_moves = [(row - 1, col - 1),
-            #                   (row + 1, col - 1),
-            #                   (row - 1, col + 1),
-            #                   (row + 1, col + 1),]
-            # for
-            pass
+            incr_left = col + 1
+            incr_right = COLS - col 
+            incr_up = row + 1
+            incr_down = ROWS - row 
+            possible_moves = [(row - i, col - i) for i in range(1, min(incr_left, incr_up))] + \
+                             [(row - i, col + i) for i in range(1, min(incr_right, incr_up))] + \
+                             [(row + i, col - i) for i in range(1, min(incr_left, incr_down))] + \
+                             [(row + i, col + i) for i in range(1, min(incr_right, incr_down))]
+            for moves in possible_moves:
+                row_b, col_b = moves
+                if row_b >= 0 and row_b < ROWS and col_b >= 0 and col_b < COLS:
+                    piece.moves.append(moves)                
 
         def rook_moves():
-            pass
+            incr_left = col + 1
+            incr_right = COLS - col 
+            incr_up = row + 1
+            incr_down = ROWS - row
+            possible_moves = [(row - i, col) for i in range(1, incr_up)] + \
+                             [(row + i, col) for i in range(1, incr_down)] + \
+                             [(row, col - i) for i in range(1, incr_left)] + \
+                             [(row, col + i) for i in range(1, incr_right)]
+            for moves in possible_moves:
+                row_r, col_r = moves
+                if row_r >= 0 and row_r < ROWS and col_r >= 0 and col_r < COLS:
+                    piece.moves.append(moves) 
 
         def queen_moves():
-            pass
+            incr_left = col + 1
+            incr_right = COLS - col 
+            incr_up = row + 1
+            incr_down = ROWS - row 
+            
+            possible_moves = [(row - i, col - i) for i in range(1, min(incr_left, incr_up))] + \
+                [(row - i, col + i) for i in range(1, min(incr_right, incr_up))] + \
+                [(row + i, col - i) for i in range(1, min(incr_left, incr_down))] + \
+                [(row + i, col + i) for i in range(1, min(incr_right, incr_down))] + \
+                [(row - i, col) for i in range(1, incr_up)] + \
+                [(row + i, col) for i in range(1, incr_down)] + \
+                [(row, col - i) for i in range(1, incr_left)] + \
+                [(row, col + i) for i in range(1, incr_right)]
+
+            for moves in possible_moves:
+                row_q, col_q = moves
+                if row_q >= 0 and row_q < ROWS and col_q >= 0 and col_q < COLS:
+                    piece.moves.append(moves)  
 
         def king_moves():
             possible_moves = [(row, col - 1),
@@ -110,4 +142,13 @@ class Board:
                 
         if isinstance(piece, King):
             king_moves()
+
+        print(f"Possible moves for {piece.__class__.__name__} at ({row}, {col}): {piece.moves}")
+
+
+    def move(self, row, col, piece, color):
+        print(self.squares[row][col].piece)
+        self.squares[row][col].piece = piece
+        self.squares[row][col].piece.moves = [] # Clear moves after moving the piece
+        
                 
