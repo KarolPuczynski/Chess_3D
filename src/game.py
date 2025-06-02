@@ -6,7 +6,7 @@ from piece import Piece
 class Game():
 
     def __init__(self):
-        self.next_player = 'white'
+        self.current_player = 'white'
         self.board = Board()
         self.selected_piece = None
 
