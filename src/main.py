@@ -24,7 +24,7 @@ while True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
 
-            if event.button == 1:  # Left mouse button, showing all possible moves for selected piece 
+            if event.button == 1:  # Left mouse button
                 mouse_pos = pygame.mouse.get_pos()  
                 clicked_col, clicked_row  = mouse_pos[0] // SQUARE_SIZE, mouse_pos[1] // SQUARE_SIZE # Finding coordinates of the clicked square based on the click
                 

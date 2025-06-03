@@ -13,7 +13,6 @@ class Board:
         self.white_king_position = (7, 4)
         self.black_king_position = (0, 4)
 
-
     def _create(self):
         # Creating 64 objejcts of class Square
         for row in range(ROWS):
@@ -43,14 +42,31 @@ class Board:
     def move(self, last_row, last_col, row, col, piece, color):        
         self.squares[last_row][last_col].piece = None
         self.squares[row][col].piece = piece
-        # if isinstance(piece, King):
-        #     if color == 'white':
-        #         self.white_king_position = (row, col)
-        #     else:
-        #         self.black_king_position = (row, col)
-        # self.in_check() 
+        if isinstance(piece, Pawn):
+            self.check_pawn_promotion(row, col, piece)
+        elif isinstance(piece, King) and not piece.moved:
+            self.castling(row, col, piece)
         self.squares[row][col].piece.moves = []                                                    # Clear moves after moving the piece
         self.squares[row][col].piece.moved = True
+
+    def check_pawn_promotion(self, row, col, piece):
+        if isinstance(piece, Pawn):
+            if (piece.color == 'white' and row == 0) or (piece.color == 'black' and row == 7):
+                self.squares[row][col].piece = Queen(piece.color)
+
+    def castling(self, row, col, piece):
+        row_other = 7 if piece.color == 'white' else 0
+        if col == 2:
+            rook_col = 0
+            new_rook_col = 3
+        elif col == 6:
+            rook_col = 7
+            new_rook_col = 5
+        else:
+            return
+        self.squares[row_other][rook_col].piece = None
+        self.squares[row_other][new_rook_col].piece = Rook(piece.color)
+        self.squares[row_other][new_rook_col].piece.moved = True
 
     def in_check(self, curr_row, curr_col, possible_row, possible_col, piece):
         temp_piece = copy.deepcopy(piece)
@@ -148,7 +164,7 @@ class Board:
                         else:
                             piece.moves.append(moves)
 
-        def moves_appending(directions, row, col, piece):
+        def moves_appending(directions):
             for dy, dx in directions:
                 y, x = row + dy, col + dx
                 while 0 <= y < ROWS and 0 <= x < COLS:
@@ -178,7 +194,7 @@ class Board:
                             (row - 1, col - 1),
                             (row - 1, col + 1),
                             (row + 1, col - 1),
-                            (row + 1, col + 1),]
+                            (row + 1, col + 1)]
             for moves in possible_moves:
                 row_k, col_k = moves
                 if row_k >= 0 and row_k < ROWS and col_k >= 0 and col_k < COLS:
@@ -197,6 +213,17 @@ class Board:
                             else:
                                 piece.moves.append(moves)
 
+            # Castling logic
+            row_other = 7 if piece.color == 'white' else 0
+            if isinstance(self.squares[row_other][4].piece, King) and not self.squares[row_other][4].piece.moved:
+                if isinstance(self.squares[row_other][0].piece, Rook) and not self.squares[row_other][0].piece.moved:
+                    if all(self.squares[row_other][i].piece is None for i in range(1, 4)):
+                        if not self.in_check(row, col, row_other, 2, piece):
+                            piece.moves.append((row_other, 2))
+                    elif all(self.squares[row_other][i].piece is None for i in range(5, 7)):
+                        if not self.in_check(row, col, row_other, 6, piece):
+                            piece.moves.append((row_other, 6))
+
         piece.moves = []  # Clear previous moves
 
         if isinstance(piece, Pawn):
@@ -207,15 +234,15 @@ class Board:
                 
         if isinstance(piece, Bishop):
             directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]                                                
-            moves_appending(directions, row, col, piece) 
+            moves_appending(directions) 
                 
         if isinstance(piece, Rook):
             directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]                                        
-            moves_appending(directions, row, col, piece) 
+            moves_appending(directions) 
                 
         if isinstance(piece, Queen):
             directions = [(-1, -1), (-1, 1), (1, -1), (1, 1), (0, -1), (0, 1), (-1, 0), (1, 0)]    
-            moves_appending(directions, row, col, piece)
+            moves_appending(directions)
                 
         if isinstance(piece, King):
             king_moves()

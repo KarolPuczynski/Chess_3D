@@ -14,9 +14,9 @@ class Game():
         for row in range(ROWS):
             for col in range(COLS):
                 if (row + col) % 2 == 0:
-                    color = 'white'
+                    color = LIGHT_SQUARE_COLOR
                 else:
-                    color = 'darkgrey'
+                    color = DARK_SQUARE_COLOR
                 pygame.draw.rect(screen, color, (col*SQUARE_SIZE, row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
 
     def draw_pieces(self, screen):
@@ -31,5 +31,9 @@ class Game():
     def show_moves(self, screen, piece):
         for moves in piece.moves: 
             row, col = moves
+            if (row + col) % 2 == 0:
+                color = LIGHT_SQUARE_HIGHLIGHT_COLOR
+            else:
+                color = DARK_SQUARE_HIGHLIGHT_COLOR
             rect = pygame.Rect(col*SQUARE_SIZE , row*SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
-            pygame.draw.rect(screen, 'blue', rect)
+            pygame.draw.rect(screen, color, rect)
