@@ -33,11 +33,11 @@ while True:
                         board.calc_moves(clicked_row, clicked_col, piece) 
                         game.show_moves(screen, piece)
                         game.selected_piece = piece
+                        print(f"Clicked square: ({clicked_row}, {clicked_col} and moves {game.selected_piece.moves}")  # showing clicked square and game selected piece moves
                         last_clicked_row, last_clicked_col = clicked_row, clicked_col
 
                 elif game.selected_piece != None and (clicked_row, clicked_col) in game.selected_piece.moves:     # Making a move 
                     board.move(last_clicked_row, last_clicked_col ,clicked_row, clicked_col, game.selected_piece, game.current_player) 
-
                     if board.is_checkmate('black' if game.current_player == 'white' else 'white'):
                         print(f"Checkmate! {game.current_player} wins!")
                         break

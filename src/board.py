@@ -1,4 +1,3 @@
-import pygame
 from const import *
 from square import Square
 from piece import *
@@ -38,14 +37,14 @@ class Board:
         self.squares[row_other][3] = Square(row_other, 3, Queen(color))
         # adding king (white or black)
         self.squares[row_other][4] = Square(row_other, 4, King(color))
-
+        
     def move(self, last_row, last_col, row, col, piece, color):        
         self.squares[last_row][last_col].piece = None
         self.squares[row][col].piece = piece
-        if isinstance(piece, Pawn):
+        if isinstance(piece, Pawn):                                           
             self.check_pawn_promotion(row, col, piece)
         elif isinstance(piece, King) and not piece.moved:
-            self.castling(row, col, piece)
+            self.castling(row, col, piece)        
         self.squares[row][col].piece.moves = []                                                    # Clear moves after moving the piece
         self.squares[row][col].piece.moved = True
 
@@ -68,10 +67,16 @@ class Board:
         self.squares[row_other][new_rook_col].piece = Rook(piece.color)
         self.squares[row_other][new_rook_col].piece.moved = True
 
+    def valid_move(self, curr_row, curr_col, possible_row, possible_col, piece, bool):
+        if bool:
+            if not self.in_check(curr_row, curr_col, possible_row, possible_col, piece):
+                piece.moves.append((possible_row, possible_col))
+        else:
+            piece.moves.append((possible_row, possible_col))
+
     def in_check(self, curr_row, curr_col, possible_row, possible_col, piece):
         temp_piece = copy.deepcopy(piece)
         temp_board = copy.deepcopy(self)
-
         temp_board.move(curr_row, curr_col, possible_row, possible_col, temp_piece, piece.color)
 
         for r in range(ROWS):
@@ -114,7 +119,7 @@ class Board:
         
         # Calculate all possible moves depending on selected piece
 
-        def pawn_moves():
+        def pawn_moves():                                                                          # Calculating moves for the pawn                            
             directions = [(piece.dir, 0), (2 * piece.dir, 0), (piece.dir, 1), (piece.dir, -1)]
             for dy, dx in directions:
                 y, x = row + dy, col + dx
@@ -123,29 +128,17 @@ class Board:
 
                     if dx != 0 and target is not None:                                             # Capturing diagonally
                         if target.color != piece.color:
-                            if bool:
-                                if not self.in_check(row, col, y, x, piece): 
-                                    piece.moves.append((y, x))
-                            else:
-                                piece.moves.append((y, x))
+                            self.valid_move(row, col, y, x, piece, bool)
 
                     elif dy == 2 * piece.dir and piece.moved == False:                             # Moving pawn two squares forward
                         if target is None and self.squares[y - piece.dir][x].piece is None:
-                            if bool:
-                                if not self.in_check(row, col, y, x, piece): 
-                                    piece.moves.append((y, x))
-                            else:
-                                piece.moves.append((y, x))
+                            self.valid_move(row, col, y, x, piece, bool)
 
                     elif dx == 0 and dy == piece.dir and target is None:                           # Moving pawn one square forward 
-                        if bool:
-                            if not self.in_check(row, col, y, x, piece): 
-                                piece.moves.append((y, x))
-                        else:
-                            piece.moves.append((y, x))
+                        self.valid_move(row, col, y, x, piece, bool)
 
-        def knight_moves():
-            possible_moves = [(row - 2, col - 1),                                                  # All possible moves for the knight
+        def knight_moves():                                                                        # Calculating moves for the knight
+            possible_moves = [(row - 2, col - 1),                                                  
                               (row - 2, col + 1),
                               (row + 2, col - 1),
                               (row + 2, col + 1),
@@ -158,36 +151,24 @@ class Board:
                 if row_k >= 0 and row_k < ROWS and col_k >= 0 and col_k < COLS:                  
                     target = self.squares[row_k][col_k].piece
                     if target is None or target.color != piece.color:  
-                        if bool:
-                            if not self.in_check(row, col, row_k, col_k, piece): 
-                                piece.moves.append(moves)
-                        else:
-                            piece.moves.append(moves)
+                        self.valid_move(row, col, row_k, col_k, piece, bool)
 
-        def moves_appending(directions):
+        def moves_appending(directions):                                                           # Calculating moves for bishop, rook and queen
             for dy, dx in directions:
                 y, x = row + dy, col + dx
                 while 0 <= y < ROWS and 0 <= x < COLS:
                     target = self.squares[y][x].piece
                     if target is None:
-                        if bool:
-                            if not self.in_check(row, col, y, x, piece): 
-                                piece.moves.append((y, x))
-                        else:
-                            piece.moves.append((y, x))
+                        self.valid_move(row, col, y, x, piece, bool)
                     else:
                         if target.color != piece.color:  
-                            if bool:
-                                if not self.in_check(row, col, y, x, piece): 
-                                    piece.moves.append((y, x))
-                            else:
-                                piece.moves.append((y, x))
+                            self.valid_move(row, col, y, x, piece, bool)
                         break  
                     x += dx
                     y += dy     
 
-        def king_moves():   
-            possible_moves = [(row, col - 1),                                                      # All possible moves for the king                                       
+        def king_moves():                                                                          # Calculating moves for the king
+            possible_moves = [(row, col - 1),                                                                                             
                             (row, col + 1),
                             (row - 1, col),
                             (row + 1, col),
@@ -200,28 +181,20 @@ class Board:
                 if row_k >= 0 and row_k < ROWS and col_k >= 0 and col_k < COLS:
                     target = self.squares[row_k][col_k].piece
                     if target is None:
-                        if bool:
-                            if not self.in_check(row, col, row_k, col_k, piece): 
-                                piece.moves.append(moves)
-                        else:
-                            piece.moves.append(moves)
+                        self.valid_move(row, col, row_k, col_k, piece, bool)
                     else:
                         if target.color != piece.color:
-                            if bool:
-                                if not self.in_check(row, col, row_k, col_k, piece): 
-                                    piece.moves.append(moves)
-                            else:
-                                piece.moves.append(moves)
+                            self.valid_move(row, col, row_k, col_k, piece, bool)
 
             # Castling logic
             row_other = 7 if piece.color == 'white' else 0
-            if isinstance(self.squares[row_other][4].piece, King) and not self.squares[row_other][4].piece.moved:
+            if isinstance(self.squares[row_other][4].piece, King) and not self.squares[row_other][4].piece.moved and not self.in_check(row, col, row_other, 4, piece):
                 if isinstance(self.squares[row_other][0].piece, Rook) and not self.squares[row_other][0].piece.moved:
                     if all(self.squares[row_other][i].piece is None for i in range(1, 4)):
-                        if not self.in_check(row, col, row_other, 2, piece):
+                        if not self.in_check(row, col, row_other, 2, piece) and not self.in_check(row, col, row_other, 3, piece):
                             piece.moves.append((row_other, 2))
                     elif all(self.squares[row_other][i].piece is None for i in range(5, 7)):
-                        if not self.in_check(row, col, row_other, 6, piece):
+                        if not self.in_check(row, col, row_other, 6, piece) and not self.in_check(row, col, row_other, 5, piece):
                             piece.moves.append((row_other, 6))
 
         piece.moves = []  # Clear previous moves
