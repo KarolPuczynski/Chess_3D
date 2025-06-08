@@ -13,7 +13,7 @@ class Game():
         self.current_player = 'white'
         self.board = Board()
         self.selected_piece = None
-        self.board_3D = OBJ('assets/models/chess_board_wood.obj', swapyz=True)
+        self.board_3D = OBJ('assets/models/chess_board.obj', swapyz=True)
         self.pieces_3D = {}
         self.load_pieces_3d()
         self.board_start_x_3D = -16.8

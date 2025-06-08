@@ -47,7 +47,7 @@ board = game.board
 view_mode = '3d'  # startujemy od 3D, możesz zmienić na '2d'
 
 while True:
-    clock.tick(100)
+    clock.tick(70)
     
     if view_mode == '3d':
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
