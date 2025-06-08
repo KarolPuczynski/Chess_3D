@@ -46,14 +46,14 @@ class Board:
 
         self.squares[row_other][7] = Square(row_other, 7, Rook(color))
         self.squares[row_other][7].piece.position = (row_other, 7)
-
+        
         # adding queen (white or black)
-        self.squares[row_other][3] = Square(row_other, 3, Queen(color))
-        self.squares[row_other][3].piece.position = (row_other, 3)
+        self.squares[row_other][4] = Square(row_other, 4, Queen(color))
+        self.squares[row_other][4].piece.position = (row_other, 4)
 
         # adding king (white or black)
-        self.squares[row_other][4] = Square(row_other, 4, King(color))
-        self.squares[row_other][4].piece.position = (row_other, 4)
+        self.squares[row_other][3] = Square(row_other, 3, King(color))
+        self.squares[row_other][3].piece.position = (row_other, 3)
 
     def restart_game(self):
         pass
