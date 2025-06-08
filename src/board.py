@@ -24,36 +24,39 @@ class Board:
         # adding pawns (white or black)
         for col in range(COLS):
             self.squares[row_pawn][col] = Square(row_pawn, col, Pawn(color))
-            self.squares[row_pawn][col].piece.position = (row_other, col)
+            self.squares[row_pawn][col].piece.position = (row_pawn, col)
         
         # adding knights (white or black)
         self.squares[row_other][1] = Square(row_other, 1, Knight(color))
-        self.squares[row_other][1].piece.position = (row_other, col)
+        self.squares[row_other][1].piece.position = (row_other, 1)
 
         self.squares[row_other][6] = Square(row_other, 6, Knight(color))
-        self.squares[row_other][6].piece.position = (row_other, col)
+        self.squares[row_other][6].piece.position = (row_other, 6)
         
         # adding bishops (white or black)
         self.squares[row_other][2] = Square(row_other, 2, Bishop(color))
-        self.squares[row_other][2].piece.position = (row_other, col)
+        self.squares[row_other][2].piece.position = (row_other, 2)
 
         self.squares[row_other][5] = Square(row_other, 5, Bishop(color))
-        self.squares[row_other][5].piece.position = (row_other, col)
+        self.squares[row_other][5].piece.position = (row_other, 5)
         
         # adding rooks (white or black)
         self.squares[row_other][0] = Square(row_other, 0, Rook(color))
-        self.squares[row_other][0].piece.position = (row_other, col)
+        self.squares[row_other][0].piece.position = (row_other, 0)
 
         self.squares[row_other][7] = Square(row_other, 7, Rook(color))
-        self.squares[row_other][7].piece.position = (row_other, col)
+        self.squares[row_other][7].piece.position = (row_other, 7)
 
         # adding queen (white or black)
         self.squares[row_other][3] = Square(row_other, 3, Queen(color))
-        self.squares[row_other][3].piece.position = (row_other, col)
+        self.squares[row_other][3].piece.position = (row_other, 3)
 
         # adding king (white or black)
         self.squares[row_other][4] = Square(row_other, 4, King(color))
-        self.squares[row_other][4].piece.position = (row_other, col)
+        self.squares[row_other][4].piece.position = (row_other, 4)
+
+    def restart_game(self):
+        pass
 
     def move(self, last_row, last_col, row, col, piece, color):        
         self.squares[last_row][last_col].piece = None
@@ -66,6 +69,12 @@ class Board:
             self.castling(row, col, piece)        
         self.squares[row][col].piece.moves = []                                                    # Clear moves after moving the piece
         self.squares[row][col].piece.moved = True
+
+    def undo_move(self):
+        pass
+
+    def redo_move(self):
+        pass
 
     def check_pawn_promotion(self, row, col, piece):
         if isinstance(piece, Pawn):
@@ -133,7 +142,10 @@ class Board:
                 return self.in_check(king_row, king_col, king_row, king_col, king)
 
         return False 
-     
+
+    def is_stalemate(self):
+        pass
+
     def calc_moves(self, row, col, piece, bool=True):
         
         # Calculate all possible moves depending on selected piece

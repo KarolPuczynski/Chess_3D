@@ -16,13 +16,13 @@ srf = pygame.display.set_mode(viewport, OPENGL | DOUBLEBUF)
 glClearColor(0.7, 1.0, 0.7, 1.0)
 
 glLightfv(GL_LIGHT0, GL_POSITION,  (-40, 200, 100, 0.0))
-glLightfv(GL_LIGHT0, GL_AMBIENT, (0.2, 0.2, 0.2, 1.0))
-glLightfv(GL_LIGHT0, GL_DIFFUSE, (0.5, 0.5, 0.5, 1.0))
+glLightfv(GL_LIGHT0, GL_AMBIENT, (0.4, 0.4, 0.4, 1.0))  # więcej światła tła
+glLightfv(GL_LIGHT0, GL_DIFFUSE, (0.8, 0.8, 0.8, 1.0))  # silniejsze rozproszenie
 glEnable(GL_LIGHT0)
 glEnable(GL_LIGHTING)
 glEnable(GL_COLOR_MATERIAL)
 glEnable(GL_DEPTH_TEST)
-glShadeModel(GL_SMOOTH)           # most obj files expect to be smooth-shaded
+glShadeModel(GL_SMOOTH)           
 
 
 clock = pygame.time.Clock()
@@ -44,7 +44,7 @@ rotate = move = False
 game = Game()
 board = game.board
 
-view_mode = '3d'  # startujemy od 3D, możesz zmienić na '2d'
+view_mode = '3d'  
 
 while True:
     clock.tick(70)
@@ -58,14 +58,13 @@ while True:
         glRotate(rx, 0, 1, 0)
         glRotate(rz, 0, 0, 1)
         game.drawing_chessboard_3d(srf)
+        game.draw_pieces_3d(game.selected_piece)
         if game.selected_piece:
             game.show_moves_3d(game.selected_piece, game.selected_piece.position[0], game.selected_piece.position[1])
-        game.draw_pieces_3d()
         pygame.display.flip()
 
     else:
-        # 2D - rysujemy normalnie Pygame 2D (bez OpenGL)
-        srf.fill((0, 0, 0))  # czyścimy ekran na czarno lub inny kolor
+        srf.fill((0, 0, 0))
         game.drawing_chessboard(srf)
         game.draw_pieces(srf)
         pygame.display.flip()
@@ -77,36 +76,39 @@ while True:
             if e.key == K_ESCAPE:
                 sys.exit()
             elif e.key == K_SPACE:
-                # Przełączanie widoku
                 if view_mode == '3d':
                     view_mode = '2d'
-                    srf = pygame.display.set_mode(viewport)  # bez OPENGL
-                    print("Przełączono na widok: 2d")
+                    srf = pygame.display.set_mode(viewport)
                 else:
                     view_mode = '3d'
                     rx, ry = 0, 0
                     tx, ty = 0, 0
                     zpos = 5
                     srf = pygame.display.set_mode(viewport, OPENGL | DOUBLEBUF)
-                    # Ustawienia OpenGL po przełączeniu
+
                     glClearColor(0.7, 1.0, 0.7, 1.0)
                     glEnable(GL_DEPTH_TEST)
                     glMatrixMode(GL_PROJECTION)
                     glLoadIdentity()
                     gluPerspective(90.0, viewport[0]/float(viewport[1]), 1, 100.0)
                     glMatrixMode(GL_MODELVIEW)
-                    print("Przełączono na widok: 3d")
 
             elif e.key == K_a:
                 rotate_left = True
             elif e.key == K_d:
                 rotate_right = True
+            elif e.key == K_n:
+                board.redo_move()
+            elif e.key == K_m:
+                board.undo_move()
+            elif e.key == K_r:
+                board.restart_game()
 
         elif e.type == KEYUP:
             if e.key == K_a:
                 rotate_left = False
             elif e.key == K_d:
-                rotate_right = False        
+                rotate_right = False
 
         elif e.type == MOUSEBUTTONDOWN:
             if e.button == 4: zpos = max(1, zpos-1)
@@ -115,12 +117,15 @@ while True:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 clicked_row, clicked_col = game.world_to_board_coords(mouse_x, mouse_y)
                 if clicked_row is not None and clicked_col is not None:
+
                     if board.squares[clicked_row][clicked_col].has_piece() and board.squares[clicked_row][clicked_col].piece.color == game.current_player:
                         piece = board.squares[clicked_row][clicked_col].piece
                         board.calc_moves(clicked_row, clicked_col, piece)
                         game.show_moves_3d(piece, clicked_row, clicked_col)
                         game.selected_piece = piece
                         last_clicked_row, last_clicked_col = clicked_row, clicked_col
+                        piece.piece_up = False
+
                     elif game.selected_piece is not None and (clicked_row, clicked_col) in game.selected_piece.moves:
                         board.move(last_clicked_row, last_clicked_col, clicked_row, clicked_col, game.selected_piece, game.current_player)
                         if board.is_checkmate('black' if game.current_player == 'white' else 'white'):
@@ -128,6 +133,7 @@ while True:
                             sys.exit()
                         game.selected_piece = None
                         game.current_player = 'black' if game.current_player == 'white' else 'white'
+
                     else:
                         game.selected_piece = None
 
@@ -146,8 +152,8 @@ while True:
                 ty -= j
 
     if rotate_left:
-        rz += 1
+        rz += 2
     if rotate_right:
-        rz -= 1
+        rz -= 2
 
     
