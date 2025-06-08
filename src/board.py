@@ -24,23 +24,42 @@ class Board:
         # adding pawns (white or black)
         for col in range(COLS):
             self.squares[row_pawn][col] = Square(row_pawn, col, Pawn(color))
+            self.squares[row_pawn][col].piece.position = (row_other, col)
+        
         # adding knights (white or black)
         self.squares[row_other][1] = Square(row_other, 1, Knight(color))
+        self.squares[row_other][1].piece.position = (row_other, col)
+
         self.squares[row_other][6] = Square(row_other, 6, Knight(color))
+        self.squares[row_other][6].piece.position = (row_other, col)
+        
         # adding bishops (white or black)
         self.squares[row_other][2] = Square(row_other, 2, Bishop(color))
+        self.squares[row_other][2].piece.position = (row_other, col)
+
         self.squares[row_other][5] = Square(row_other, 5, Bishop(color))
+        self.squares[row_other][5].piece.position = (row_other, col)
+        
         # adding rooks (white or black)
         self.squares[row_other][0] = Square(row_other, 0, Rook(color))
+        self.squares[row_other][0].piece.position = (row_other, col)
+
         self.squares[row_other][7] = Square(row_other, 7, Rook(color))
+        self.squares[row_other][7].piece.position = (row_other, col)
+
         # adding queen (white or black)
         self.squares[row_other][3] = Square(row_other, 3, Queen(color))
+        self.squares[row_other][3].piece.position = (row_other, col)
+
         # adding king (white or black)
         self.squares[row_other][4] = Square(row_other, 4, King(color))
-        
+        self.squares[row_other][4].piece.position = (row_other, col)
+
     def move(self, last_row, last_col, row, col, piece, color):        
         self.squares[last_row][last_col].piece = None
         self.squares[row][col].piece = piece
+        self.squares[row][col].piece.position = (row, col)
+        self.squares[row][col].piece.piece_up = False  
         if isinstance(piece, Pawn):                                           
             self.check_pawn_promotion(row, col, piece)
         elif isinstance(piece, King) and not piece.moved:

@@ -4,6 +4,8 @@ class Piece:
         self.color = color
         self.moves = []
         self.moved = False
+        self.position = None
+        self.piece_up = False # Indicates if the piece is currently selected
 
 class Pawn(Piece):
     def __init__(self, color):

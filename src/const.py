@@ -1,5 +1,5 @@
 # Window dimensions
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
 
 # Board specifications
