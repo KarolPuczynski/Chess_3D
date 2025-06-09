@@ -97,10 +97,14 @@ while True:
                 rotate_left = True
             elif e.key == K_d:
                 rotate_right = True
-            elif e.key == K_n:
-                board.redo_move()
-            elif e.key == K_m:
-                board.undo_move()
+            elif e.key == K_RIGHT:
+                next_player = board.redo_move()
+                if next_player:
+                    game.current_player = next_player
+            elif e.key == K_LEFT:
+                prev_player = board.undo_move()
+                if prev_player:
+                    game.current_player = prev_player
             elif e.key == K_r:
                 board.restart_game()
 
