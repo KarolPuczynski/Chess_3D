@@ -11,6 +11,8 @@ class Board:
         self._add_pieces('black')
         self.white_king_position = (7, 4)
         self.black_king_position = (0, 4)
+        self.move_history = []
+        self.redo_stack = []
 
     def _create(self):
         # Creating 64 objejcts of class Square
@@ -58,7 +60,18 @@ class Board:
     def restart_game(self):
         pass
 
-    def move(self, last_row, last_col, row, col, piece, color):        
+    def move(self, last_row, last_col, row, col, piece, color):  
+        captured_piece = self.squares[row][col].piece # Undo/Redo functionality
+        self.move_history.append({
+            'from': (last_row, last_col),
+            'to': (row, col),
+            'piece': piece,
+            'captured': captured_piece,
+            'moved': piece.moved,
+            'player': color
+        })
+        self.redo_stack.clear()
+        
         self.squares[last_row][last_col].piece = None
         self.squares[row][col].piece = piece
         self.squares[row][col].piece.position = (row, col)
@@ -71,10 +84,39 @@ class Board:
         self.squares[row][col].piece.moved = True
 
     def undo_move(self):
-        pass
+        if not self.move_history:
+            return False
+
+        last_move = self.move_history.pop()
+        from_row, from_col = last_move['from']
+        to_row, to_col = last_move['to']
+        piece = last_move['piece']
+        captured = last_move['captured']
+
+        self.squares[to_row][to_col].piece = captured
+        self.squares[from_row][from_col].piece = piece
+        piece.position = (from_row, from_col)
+        piece.moved = last_move['moved']
+        self.redo_stack.append(last_move)
+
+        return last_move['player']
 
     def redo_move(self):
-        pass
+        if not self.redo_stack:
+            return False
+
+        move = self.redo_stack.pop()
+        from_row, from_col = move['from']
+        to_row, to_col = move['to']
+        piece = move['piece']
+
+        self.squares[from_row][from_col].piece = None
+        self.squares[to_row][to_col].piece = piece
+        piece.position = (to_row, to_col)
+        piece.moved = True
+        self.move_history.append(move)
+
+        return 'black' if move['player'] == 'white' else 'white'
 
     def check_pawn_promotion(self, row, col, piece):
         if isinstance(piece, Pawn):
