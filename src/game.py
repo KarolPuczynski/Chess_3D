@@ -48,7 +48,6 @@ class Game():
 
         col = round(col_f)
         row = 7 - round(row_f)
-
         if 0 <= col < board_size and 0 <= row < board_size:
             return row, col
         else:

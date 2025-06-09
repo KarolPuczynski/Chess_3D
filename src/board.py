@@ -62,7 +62,6 @@ class Board:
         self.squares[last_row][last_col].piece = None
         self.squares[row][col].piece = piece
         self.squares[row][col].piece.position = (row, col)
-        self.squares[row][col].piece.piece_up = False  
         if isinstance(piece, Pawn):                                           
             self.check_pawn_promotion(row, col, piece)
         elif isinstance(piece, King) and not piece.moved:
