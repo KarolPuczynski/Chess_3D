@@ -47,7 +47,7 @@ class Game():
         row_f = (intersect_y - self.board_start_y_3D) / self.square_size_3D
 
         col = round(col_f)
-        row = round(row_f)
+        row = 7 - round(row_f)
 
         if 0 <= col < board_size and 0 <= row < board_size:
             return row, col
@@ -74,7 +74,7 @@ class Game():
                     model = self.pieces_3D.get((piece.name, piece.color)) 
                     if model and piece != selected_piece:
                         glPushMatrix()
-                        glTranslatef(self.board_start_x_3D + col * self.square_size_3D, self.board_start_y_3D + row * self.square_size_3D, 0)
+                        glTranslatef(self.board_start_x_3D + col * self.square_size_3D, self.board_start_y_3D + (7-row) * self.square_size_3D, 0)
                         glScalef(0.8, 0.8, 0.8)    
                         glCallList(model.gl_list)
                         glPopMatrix()
@@ -109,7 +109,7 @@ class Game():
         if model:
             glPushMatrix()
             x = self.board_start_x_3D + col * self.square_size_3D
-            y = self.board_start_y_3D + row * self.square_size_3D
+            y = self.board_start_y_3D + (7-row) * self.square_size_3D
             glTranslatef(x, y, 2)
             glScalef(0.8, 0.8, 0.8)     
             glCallList(model.gl_list)
@@ -119,8 +119,8 @@ class Game():
             move_row, move_col = move
 
             x = self.board_start_x_3D + move_col * self.square_size_3D
-            y = self.board_start_y_3D + move_row * self.square_size_3D
-            z = 0.1  
+            y = self.board_start_y_3D + (7-move_row) * self.square_size_3D
+            z = 0.1
 
             self.draw_circle_3d(x, y, z, radius=1.75, color=(1.0, 0, 0))
 
