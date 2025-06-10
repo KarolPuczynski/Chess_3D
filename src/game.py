@@ -54,6 +54,13 @@ class Game():
             return None, None
 
     def drawing_chessboard_3d(self, screen):
+        glBegin(GL_QUADS)
+        glColor3f(1, 0, 0)
+        glVertex3f(-1, -1, 0)
+        glVertex3f(1, -1, 0)
+        glVertex3f(1, 1, 0)
+        glVertex3f(-1, 1, 0)
+        glEnd()
         glCallList(self.board_3D.gl_list)
 
     def load_pieces_3d(self):
