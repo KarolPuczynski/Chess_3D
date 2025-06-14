@@ -8,6 +8,7 @@ check_sound = pygame.mixer.Sound('assets/sounds/check_sound.wav')
 promote_sound = pygame.mixer.Sound('assets/sounds/promote_sound.wav')
 castling_sound = pygame.mixer.Sound('assets/sounds/castling_sound.wav')
 horse_sound = pygame.mixer.Sound('assets/sounds/horse_sound.wav')
+king_sound = pygame.mixer.Sound('assets/sounds/king_sound.wav')
 
 def play_sound(sound_type):
     if sound_type == "move":
@@ -22,3 +23,6 @@ def play_sound(sound_type):
         castling_sound.play()
     elif sound_type == "horse":
         horse_sound.play()
+    elif sound_type == "king":
+        king_sound.play()
+        
