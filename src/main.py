@@ -1,4 +1,5 @@
-import sys, pygame
+import sys 
+import pygame
 from pygame.locals import *
 from pygame.constants import *
 from OpenGL.GL import *
@@ -7,9 +8,10 @@ from const import *
 from objloader import *
 from game import *
 import scene3D
+import sound
 
 pygame.init()
-view_mode = '3d'
+view_mode = "3d"
 pygame.display.set_caption("Chess 3D")
 srf = pygame.display.set_mode(VIEWPORT_3D, OPENGL | DOUBLEBUF | pygame.GL_MULTISAMPLEBUFFERS)  
 
@@ -23,9 +25,8 @@ rotate_right = False
 rotate = move = False
 
 clock = pygame.time.Clock()
-game = Game()
+game = Game(view_mode)
 board = game.board
-
 
 while True:
     clock.tick(60)
@@ -35,7 +36,7 @@ while True:
         glLoadIdentity()
 
         scene3D.rotate(tx, ty, rx, ry, rz, zpos)
-        game.drawing_chessboard_3d(srf)
+        game.drawing_chessboard_3d()
         if game.selected_piece:
             game.show_moves_3d(game.selected_piece, game.selected_piece.position[0], game.selected_piece.position[1])
         game.draw_pieces_3d(game.selected_piece)
@@ -69,23 +70,23 @@ while True:
                     srf = pygame.display.set_mode(VIEWPORT_3D, OPENGL | DOUBLEBUF | pygame.GL_MULTISAMPLEBUFFERS)
                     pygame.display.set_caption("Chess 3D")
                     scene3D.scene_lightning()
-                    game.board_3D = OBJ('assets/models/chess_board.obj', swapyz=True)
-                    game.load_pieces_3d()
+                    game.init_3d()
 
-            elif e.key == K_a:
+            elif e.key == K_a:               
                 rotate_left = True
             elif e.key == K_d:
                 rotate_right = True
-            elif e.key == K_RIGHT:
+            elif e.key == K_RIGHT:                      
                 next_player = board.redo_move()
                 if next_player:
                     game.current_player = next_player
-            elif e.key == K_LEFT:
+            elif e.key == K_LEFT:                       
                 prev_player = board.undo_move()
                 if prev_player:
                     game.current_player = prev_player
-            elif e.key == K_r:
-                board.restart_game()
+            elif e.key == K_r:                          # game restart
+                game = Game(view_mode)
+                board = game.board
 
         elif e.type == KEYUP:
             if e.key == K_a:
@@ -98,28 +99,31 @@ while True:
             elif e.button == 5: zpos += 1               # zooming out
 
             elif e.button == 1:                         # choosing piece or making a move by left click
+                
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 if view_mode == "3d":
                     clicked_row, clicked_col = game.world_to_board_coords(mouse_x, mouse_y)
                 else:
                     clicked_col, clicked_row  = mouse_x // SQUARE_SIZE, mouse_y // SQUARE_SIZE
+                
                 if clicked_row is not None and clicked_col is not None:
 
                     if board.squares[clicked_row][clicked_col].has_piece() and board.squares[clicked_row][clicked_col].piece.color == game.current_player:
                         piece = board.squares[clicked_row][clicked_col].piece
                         board.calc_moves(clicked_row, clicked_col, piece)
-                        if view_mode == "3d":
-                            game.show_moves_3d(piece, clicked_row, clicked_col)
-                        else:
-                            game.show_moves(srf, piece)
+                        game.show_moves_3d(piece, clicked_row, clicked_col) if view_mode == "3d" else game.show_moves(srf, piece) 
                         game.selected_piece = piece
                         last_clicked_row, last_clicked_col = clicked_row, clicked_col
 
                     elif game.selected_piece is not None and (clicked_row, clicked_col) in game.selected_piece.moves:
+                        
                         board.move(last_clicked_row, last_clicked_col, clicked_row, clicked_col, game.selected_piece, game.current_player, True)
+
                         if board.is_checkmate('black' if game.current_player == 'white' else 'white'):
                             print(f"Checkmate! {game.current_player} wins!")
-                            sys.exit()
+                            board.sound_type = "game_end"
+                            sound.play_sound(board.sound_type)
+                        
                         game.selected_piece = None
                         game.current_player = 'black' if game.current_player == 'white' else 'white'
 

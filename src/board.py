@@ -3,18 +3,19 @@ from square import Square
 from piece import *
 import copy
 import sound
+from game import *
 
 class Board:
     def __init__(self):
         self.squares = [[0, 0, 0, 0, 0, 0, 0, 0] for cols in range(COLS)]
-        self._create()
+        self._create_64_squares()
         self._add_pieces('white')
         self._add_pieces('black')
         self.sound_type = ""
         self.move_history = []
         self.redo_stack = []
 
-    def _create(self):
+    def _create_64_squares(self):
         # Creating 64 objejcts of class Square
         for row in range(ROWS):
             for col in range(COLS):
@@ -57,9 +58,6 @@ class Board:
         self.squares[row_other][4] = Square(row_other, 4, King(color))
         self.squares[row_other][4].piece.position = (row_other, 4)
 
-    def restart_game(self):
-        pass
-
     def move(self, last_row, last_col, row, col, piece, color, sound_playing = False):  
         captured_piece = self.squares[row][col].piece # Undo/Redo functionality
         self.move_history.append({
@@ -86,11 +84,16 @@ class Board:
             self.castling(row, col, piece) 
         elif isinstance(piece, Knight):
             self.sound_type = "horse"
-            
+
+        self.squares[row][col].piece.moves = []    
+        self.calc_moves(row, col, piece, bool = False)
+        for move in piece.moves:
+            if isinstance(self.squares[move[0]][move[1]].piece, King):
+                self.sound_type = "check"
         self.squares[row][col].piece.moves = []                                                    # Clear moves after moving the piece
         self.squares[row][col].piece.moved = True
+        
         if sound_playing:
-            print(self.sound_type)
             sound.play_sound(self.sound_type)
             
     def undo_move(self):
@@ -273,14 +276,15 @@ class Board:
 
             # Castling logic
             row_other = 7 if piece.color == 'white' else 0
-            if isinstance(self.squares[row_other][4].piece, King) and not self.squares[row_other][4].piece.moved and not self.in_check(row, col, row_other, 4, piece):
-                if isinstance(self.squares[row_other][0].piece, Rook) and not self.squares[row_other][0].piece.moved:
-                    if all(self.squares[row_other][i].piece is None for i in range(1, 4)):
-                        if not self.in_check(row, col, row_other, 2, piece) and not self.in_check(row, col, row_other, 3, piece):
-                            piece.moves.append((row_other, 2))
-                    elif all(self.squares[row_other][i].piece is None for i in range(5, 7)):
-                        if not self.in_check(row, col, row_other, 6, piece) and not self.in_check(row, col, row_other, 5, piece):
-                            piece.moves.append((row_other, 6))
+            if bool:
+                if isinstance(self.squares[row_other][4].piece, King) and not self.squares[row_other][4].piece.moved and not self.in_check(row, col, row_other, 4, piece):
+                    if isinstance(self.squares[row_other][0].piece, Rook) and not self.squares[row_other][0].piece.moved:
+                        if all(self.squares[row_other][i].piece is None for i in range(1, 4)):
+                            if not self.in_check(row, col, row_other, 2, piece) and not self.in_check(row, col, row_other, 3, piece):
+                                piece.moves.append((row_other, 2))
+                        elif all(self.squares[row_other][i].piece is None for i in range(5, 7)):
+                            if not self.in_check(row, col, row_other, 6, piece) and not self.in_check(row, col, row_other, 5, piece):
+                                piece.moves.append((row_other, 6))
 
         piece.moves = []  # Clear previous moves
 

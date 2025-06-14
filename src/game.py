@@ -1,7 +1,6 @@
 import pygame
 from const import *
 from board import Board
-from piece import Piece
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
@@ -9,16 +8,21 @@ from objloader import *
 
 class Game():
 
-    def __init__(self):
+    def __init__(self, view_mode):
         self.current_player = 'white'
         self.board = Board()
         self.selected_piece = None
-        self.board_3D = OBJ('assets/models/chess_board.obj', swapyz=True)
-        self.pieces_3D = {}
-        self.load_pieces_3d()
+        self.board_3D = None
+        if view_mode == "3d":
+            self.init_3d()
         self.board_start_x_3D = -16.8
         self.board_start_y_3D = -16.8
         self.square_size_3D = 4.8
+
+    def init_3d(self):
+        self.pieces_3D = {}
+        self.board_3D = OBJ('assets/models/chess_board.obj', swapyz=True)
+        self.load_pieces_3d()
 
     def world_to_board_coords(self, mouse_x, mouse_y):
         board_size = 8
@@ -52,14 +56,7 @@ class Game():
         else:
             return None, None
 
-    def drawing_chessboard_3d(self, screen):
-        glBegin(GL_QUADS)
-        glColor3f(1, 0, 0)
-        glVertex3f(-1, -1, 0)
-        glVertex3f(1, -1, 0)
-        glVertex3f(1, 1, 0)
-        glVertex3f(-1, 1, 0)
-        glEnd()
+    def drawing_chessboard_3d(self):
         glCallList(self.board_3D.gl_list)
 
     def load_pieces_3d(self):
@@ -94,7 +91,6 @@ class Game():
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         glBegin(GL_TRIANGLE_FAN)
-        # Środek — jasny, bardziej widoczny
         glColor4f(r, g, b, 0.7)
         glVertex3f(x, y, z)
 
@@ -102,7 +98,6 @@ class Game():
             angle = 2 * pi * i / segments
             dx = radius * cos(angle)
             dy = radius * sin(angle)
-            # Obrzeże — bardziej przezroczyste
             glColor4f(r, g, b, 0.55)
             glVertex3f(x + dx, y + dy, z)
         glEnd()
@@ -111,7 +106,7 @@ class Game():
 
     def show_moves_3d(self, piece, row, col):
         model = self.pieces_3D.get((piece.name, piece.color))
-        if model:
+        if model:                                                       # lifting up the piece
             glPushMatrix()
             x = self.board_start_x_3D + col * self.square_size_3D
             y = self.board_start_y_3D + (7-row) * self.square_size_3D
@@ -120,7 +115,7 @@ class Game():
             glCallList(model.gl_list)
             glPopMatrix()
 
-        for move in piece.moves:
+        for move in piece.moves:                                        # drawing red circles as possible moves
             move_row, move_col = move
 
             x = self.board_start_x_3D + move_col * self.square_size_3D
