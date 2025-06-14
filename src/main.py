@@ -125,6 +125,11 @@ while True:
                             board.sound_type = "game_end"
                             sound.play_sound(board.sound_type)
                         
+                        if board.is_stalemate('black' if game.current_player == 'white' else 'white'):
+                            print(f"Stalemate! {game.current_player} has no legal moves.")
+                            board.sound_type = "stalemate"
+                            sound.play_sound(board.sound_type)
+
                         if view_mode == "3d":
                             for i in range(45):
                                 rz += 4
