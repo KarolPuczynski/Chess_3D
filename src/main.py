@@ -1,5 +1,6 @@
 import sys 
 import pygame
+import time
 from pygame.locals import *
 from pygame.constants import *
 from OpenGL.GL import *
@@ -17,7 +18,7 @@ srf = pygame.display.set_mode(VIEWPORT_3D, OPENGL | DOUBLEBUF | pygame.GL_MULTIS
 
 scene3D.scene_lightning()
 
-rx, ry, rz = (0, 0, 0)                                              # rotation parameters
+rx, ry, rz = (0, -53, 0)                                              # rotation parameters
 tx, ty = (0,0)
 zpos = 40
 rotate_left = False
@@ -124,6 +125,17 @@ while True:
                             board.sound_type = "game_end"
                             sound.play_sound(board.sound_type)
                         
+                        if view_mode == "3d":
+                            for i in range(45):
+                                rz += 4
+                                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+                                glLoadIdentity()
+                                scene3D.rotate(tx, ty, rx, ry, rz, zpos)
+                                game.drawing_chessboard_3d()
+                                game.draw_pieces_3d(None)
+                                pygame.display.flip()
+                                clock.tick(60)
+                            
                         game.selected_piece = None
                         game.current_player = 'black' if game.current_player == 'white' else 'white'
 
