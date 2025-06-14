@@ -8,6 +8,7 @@ check_sound = pygame.mixer.Sound('assets/sounds/check_sound.wav')
 promote_sound = pygame.mixer.Sound('assets/sounds/promote_sound.wav')
 castling_sound = pygame.mixer.Sound('assets/sounds/castling_sound.wav')
 horse_sound = pygame.mixer.Sound('assets/sounds/horse_sound.wav')
+king_sound = pygame.mixer.Sound('assets/sounds/king_sound.wav')
 game_end_sound = pygame.mixer.Sound('assets/sounds/game-end_sound.wav')
 
 sound_dict = {
@@ -17,6 +18,7 @@ sound_dict = {
     "promote": promote_sound,
     "castle": castling_sound,
     "horse": horse_sound,
+    "king": king_sound,
     "game_end": game_end_sound
 }
 

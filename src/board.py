@@ -84,6 +84,8 @@ class Board:
             self.castling(row, col, piece) 
         elif isinstance(piece, Knight):
             self.sound_type = "horse"
+        elif isinstance(piece, King):
+            self.sound_type = "king"
 
         self.squares[row][col].piece.moves = []    
         self.calc_moves(row, col, piece, bool = False)
@@ -135,6 +137,7 @@ class Board:
         if isinstance(piece, Pawn):
             if (piece.color == 'white' and row == 0) or (piece.color == 'black' and row == 7):
                 self.squares[row][col].piece = Queen(piece.color)
+                self.squares[row][col].piece.position = (row, col)
                 self.sound_type = "promote"
 
     def castling(self, row, col, piece):
