@@ -86,6 +86,9 @@ class Board:
             self.sound_type = "horse"
         elif isinstance(piece, King):
             self.sound_type = "king"
+        elif isinstance(piece, Bishop):
+            self.sound_type = "bishop"
+            
 
         self.squares[row][col].piece.moves = []    
         self.calc_moves(row, col, piece, bool = False)
@@ -203,8 +206,23 @@ class Board:
 
         return False 
 
-    def is_stalemate(self):
-        pass
+    def is_stalemate(self, color):
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.squares[row][col].piece
+                if isinstance(piece, King) and piece.color == color:
+                    if self.in_check(row, col, row, col, piece):
+                        return False 
+
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.squares[row][col].piece
+                if piece is not None and piece.color == color:
+                    self.calc_moves(row, col, piece)
+                    if piece.moves:
+                        return False
+
+        return True
 
     def calc_moves(self, row, col, piece, bool=True):
         
