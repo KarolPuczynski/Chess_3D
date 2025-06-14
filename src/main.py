@@ -8,7 +8,6 @@ from objloader import *
 from game import *
 import scene3D
 
-
 pygame.init()
 view_mode = '3d'
 pygame.display.set_caption("Chess 3D")
@@ -117,7 +116,7 @@ while True:
                         last_clicked_row, last_clicked_col = clicked_row, clicked_col
 
                     elif game.selected_piece is not None and (clicked_row, clicked_col) in game.selected_piece.moves:
-                        board.move(last_clicked_row, last_clicked_col, clicked_row, clicked_col, game.selected_piece, game.current_player)
+                        board.move(last_clicked_row, last_clicked_col, clicked_row, clicked_col, game.selected_piece, game.current_player, True)
                         if board.is_checkmate('black' if game.current_player == 'white' else 'white'):
                             print(f"Checkmate! {game.current_player} wins!")
                             sys.exit()

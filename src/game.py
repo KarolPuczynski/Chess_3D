@@ -20,7 +20,6 @@ class Game():
         self.board_start_y_3D = -16.8
         self.square_size_3D = 4.8
 
-
     def world_to_board_coords(self, mouse_x, mouse_y):
         board_size = 8
 

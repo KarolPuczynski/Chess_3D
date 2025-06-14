@@ -15,7 +15,7 @@ def scene_lightning():
     glLightfv(GL_LIGHT0, GL_AMBIENT, (0.2, 0.2, 0.2, 1.0))
     glLightfv(GL_LIGHT0, GL_DIFFUSE, (0.4, 0.4, 0.4, 1.0))
     glLightfv(GL_LIGHT0, GL_SPECULAR, (0.1, 0.1, 0.1, 1.0))
-    glMaterialfv(GL_FRONT, GL_SHININESS, 8)
+    glMaterialfv(GL_FRONT, GL_SHININESS, 16)
 
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, (0.1, 0.1, 0.1, 1.0))
 
