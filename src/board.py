@@ -62,13 +62,19 @@ class Board:
 
     def move(self, last_row, last_col, row, col, piece, color, sound_playing = False):  
         captured_piece = self.squares[row][col].piece # Undo/Redo functionality
+        
+        promotion = None
+        if isinstance(piece, Pawn):
+            promotion = self.check_pawn_promotion(row, col, piece)
+            
         self.move_history.append({
             'from': (last_row, last_col),
             'to': (row, col),
             'piece': piece,
             'captured': captured_piece,
             'moved': piece.moved,
-            'player': color
+            'player': color,
+            'promotion': promotion
         })
         self.redo_stack.clear()
 
@@ -86,6 +92,8 @@ class Board:
             self.castling(row, col, piece) 
         elif isinstance(piece, Knight):
             self.sound_type = "horse"
+        elif isinstance(piece, King):
+            self.sound_type = "king"
             
         self.squares[row][col].piece.moves = []                                                    # Clear moves after moving the piece
         self.squares[row][col].piece.moved = True
@@ -101,10 +109,14 @@ class Board:
         from_row, from_col = last_move['from']
         to_row, to_col = last_move['to']
         piece = last_move['piece']
-        captured = last_move['captured']
 
-        self.squares[to_row][to_col].piece = captured
-        self.squares[from_row][from_col].piece = piece
+        if last_move.get('promotion'):
+            self.squares[to_row][to_col].piece = last_move['captured']
+            self.squares[from_row][from_col].piece = last_move['piece']
+        else:
+            self.squares[to_row][to_col].piece = last_move['captured']
+            self.squares[from_row][from_col].piece = last_move['piece']
+            
         piece.position = (from_row, from_col)
         piece.moved = last_move['moved']
         self.redo_stack.append(last_move)
@@ -119,9 +131,13 @@ class Board:
         from_row, from_col = move['from']
         to_row, to_col = move['to']
         piece = move['piece']
-
         self.squares[from_row][from_col].piece = None
-        self.squares[to_row][to_col].piece = piece
+        
+        if move.get('promotion'):
+            self.squares[to_row][to_col].piece = move['promotion']
+        else:
+            self.squares[to_row][to_col].piece = piece
+            
         piece.position = (to_row, to_col)
         piece.moved = True
         self.move_history.append(move)
@@ -131,8 +147,11 @@ class Board:
     def check_pawn_promotion(self, row, col, piece):
         if isinstance(piece, Pawn):
             if (piece.color == 'white' and row == 0) or (piece.color == 'black' and row == 7):
-                self.squares[row][col].piece = Queen(piece.color)
+                promoted_piece = Queen(piece.color)
+                self.squares[row][col].piece = promoted_piece
                 self.sound_type = "promote"
+                return promoted_piece
+            return None
 
     def castling(self, row, col, piece):
         row_other = 7 if piece.color == 'white' else 0
