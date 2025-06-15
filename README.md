@@ -18,6 +18,7 @@ __2D mode__
 | Key          | Action                                      |
 |--------------|---------------------------------------------|
 | Esc          | Quit the game                               |
+| R            | Restart the game                            |
 | Space        | Switch game mode (3D / 2D)                  |
 | A            | Rotate board counterclockwise around Z axis |
 | D            | Rotate board clockwise around Z axis        |
