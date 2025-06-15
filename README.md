@@ -1,5 +1,5 @@
 # 3D Chess Game
-This project is a 3D chess game developed in Python using OpenGL and it is a part of Computer Graphics course project. Chess is a two-player strategic board game played on an 8×8 checkered grid. Each game involves two players: one controlling the White pieces and the other controlling the Black pieces.
+This project is a 3D chess game developed in Python using OpenGL and it is a part of Computer Graphics course project.
 
 All 3D models of the chess pieces and the board were custom-designed and created by me and my colleague using Fusion 360.
 
