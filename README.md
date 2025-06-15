@@ -7,9 +7,11 @@ All 3D models of the chess pieces and the board were custom-designed and created
 This game allows switching between 3D and 2D modes. It also features sound effects that indicate each move, helping you better follow the gameplay.
 
 __3D mode__
+
 ![3D_demo](3D_demo.gif)
 
 __2D mode__
+
 ![3D_demo](2D_demo.gif)
 
 ## Game control
